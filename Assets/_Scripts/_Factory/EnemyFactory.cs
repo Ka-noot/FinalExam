@@ -10,9 +10,6 @@ public class EnemyFactory : MonoBehaviour
 {
     public GameObject enemy1Prefab;
     public GameObject enemy2Prefab;
-    //Edited
-    public GameObject spike1Prefab;
-    public GameObject spike2Prefab;
 
     public GameObject buttonPanel;
     public GameObject buttonPrefab;
@@ -33,7 +30,6 @@ public class EnemyFactory : MonoBehaviour
         }
 
         ButtonPanel();
-        
     }
 
     public Enemy GetEnemy(string enemyType)
@@ -59,8 +55,7 @@ public class EnemyFactory : MonoBehaviour
         foreach(Enemy enemy in enemies)
         {
             var button = Instantiate(buttonPrefab);
-            // Edited
-            button.transform.SetParent(buttonPanel.transform, false);
+            button.transform.SetParent(buttonPanel.transform);
             button.gameObject.name = enemy.Name + " Button";
             button.GetComponentInChildren<TextMeshProUGUI>().text = enemy.Name;
         }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4389807442646286469}
   - component: {fileID: 1949862743202640975}
   - component: {fileID: 922912967928719567}
+  - component: {fileID: 922912967928719564}
   m_Layer: 0
   m_Name: MovingPlatform
   m_TagString: Untagged
@@ -100,3 +101,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.022334369, y: 0.022334369, z: 0.01995956}
   m_Center: {x: 0, y: 0, z: -0.00002021808}
+--- !u!114 &922912967928719564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4417450098759066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f126d810a30214696430c8beb0c428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movepoints:
+  - {fileID: 3351497183764986388, guid: 0926e27f47fc17148ae90356abc0ca96, type: 3}
+  - {fileID: 4766048912921077304, guid: 1f7db626827cddb43afa714c5a65424a, type: 3}
+  speed: 15

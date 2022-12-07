@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 public class EditorManager : MonoBehaviour
 {
@@ -19,13 +18,10 @@ public class EditorManager : MonoBehaviour
     public GameObject prefab1;
     public GameObject prefab2;
     public GameObject item;
-    public TMP_InputField yInput;
-    public float ypos = 0f;
     public bool instantiated = false;
 
-    //Edited
-    public int unit = 1;
-    Vector3 defaultPos;
+    //Will send notifications that something has happened to whoever is interested
+    Subject subject = new Subject();
 
     // Command
     ICommand command;
@@ -38,9 +34,6 @@ public class EditorManager : MonoBehaviour
         {
             instance = this;
         }
-
-        //Edited
-        defaultPos = new Vector3(0, editorCam.transform.position.y, 0);
     }
 
     // Start is called before the first frame update
@@ -50,7 +43,8 @@ public class EditorManager : MonoBehaviour
 
         inputAction.Editor.EditorMode.performed += cntxt => EnterEditorMode();
 
-        // Edited
+        inputAction.Editor.AddItem1.performed += cntxt => AddItem(1);
+        inputAction.Editor.AddItem2.performed += cntxt => AddItem(2);
         inputAction.Editor.DropItem.performed += cntxt => DropItem();
 
         mainCam.enabled = true;
@@ -67,7 +61,33 @@ public class EditorManager : MonoBehaviour
         ui.ToggleEditorUI();
     }
 
-    // AddItem() was removed
+    public void AddItem(int itemId)
+    {
+        if(editorMode && !instantiated)
+        {
+            switch (itemId)
+            {
+                case 1:
+                    item = Instantiate(prefab1);
+                    //Create boxes that can observe events and give them an event to do
+                    SpikeBall spike1 = new SpikeBall(item, new GreenMat());
+                    //Add the boxes to the list of objects waiting for something to happen
+                    subject.AddObserver(spike1);
+                    break;
+                case 2:
+                    item = Instantiate(prefab2);
+                    //Create boxes that can observe events and give them an event to do
+                    SpikeBall spike2 = new SpikeBall(item, new YellowMat());
+                    //Add the boxes to the list of objects waiting for something to happen
+                    subject.AddObserver(spike2);
+                    break;
+                default:
+                    break;
+            }
+            subject.Notify();
+            instantiated = true; 
+        }        
+    }
 
     public void DropItem()
     {
@@ -90,7 +110,6 @@ public class EditorManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Edited
         // Checking if we are in editor mode
         if(mainCam.enabled == false && editorCam.enabled == true)
         {
@@ -100,14 +119,6 @@ public class EditorManager : MonoBehaviour
 
             // Making cursor visible when in editor mode
             Cursor.lockState = CursorLockMode.None;          
-        }
-        else if(GameplayManager.gameplay.isDead || GameplayManager.gameplay.isWon)
-        {
-            // Stop all movement in game
-            Time.timeScale = 0;
-
-            // Making cursor visible when in editor mode
-            Cursor.lockState = CursorLockMode.None;  
         }
         else
         {
@@ -120,37 +131,11 @@ public class EditorManager : MonoBehaviour
 
         if(instantiated)
         {
-            ypos = int.Parse(yInput.text);
             mousePos = Mouse.current.position.ReadValue();
-            mousePos = new Vector3(mousePos.x, mousePos.y, editorCam.transform.position.y - ypos);
+            mousePos = new Vector3(mousePos.x, mousePos.y, 43f);
  
             item.transform.position = editorCam.ScreenToWorldPoint(mousePos);
         }
         
-    }
-
-    // Added
-    public void MoveCameraPos(string direction)
-    {
-        switch (direction)
-        {
-            case "up":
-                editorCam.transform.Translate(transform.forward * unit, Space.World);
-                break;
-            case "down":
-                editorCam.transform.Translate(transform.forward * -unit, Space.World);
-                break;
-            case "left":
-                editorCam.transform.Translate(transform.right * -unit, Space.World);
-                break;
-            case "right":
-                editorCam.transform.Translate(transform.right * unit, Space.World);
-                break;
-            case "reset":
-                editorCam.transform.position = defaultPos;
-                break;
-            default:
-                break;
-        }
     }
 }

@@ -18,13 +18,11 @@ public class PrototypeFactory : MonoBehaviour
     GreenGem greenPrototype;
     PinkGem pinkPrototype;
     FullHeart heartPrototype;
-    LevelKey keyPrototype;
 
     CustomizablePlatform platformPrototype;
     public GameObject platformPrefab;
     public TMP_InputField widthInput;
     public TMP_InputField heightInput;
-    public Toggle staticPlatform;
     int platWidth;
     int platHeight;
 
@@ -38,12 +36,11 @@ public class PrototypeFactory : MonoBehaviour
         greenPrototype = new GreenGem(allData[2]._prefab, 50);
         pinkPrototype = new PinkGem(allData[3]._prefab, 100);
         heartPrototype = new FullHeart(allData[4]._prefab, 10);
-        keyPrototype = new LevelKey(allData[5]._prefab);
 
         for(int i = 0; i < allData.Count; i++)
         {
             var button = Instantiate(buttonPrefab);
-            button.transform.SetParent(buttonPanel.transform, false);
+            button.transform.SetParent(buttonPanel.transform);
             button.gameObject.name = allData[i].name + " Button";
             button.GetComponentInChildren<TextMeshProUGUI>().text = allData[i].name;
             button.GetComponent<Button>().onClick.AddListener(delegate {Spawner(button);});
@@ -71,9 +68,6 @@ public class PrototypeFactory : MonoBehaviour
             case "FullHeart":
                 editor.item = heartPrototype.Clone().Spawn();
                 break;
-            case "Key":
-                editor.item = keyPrototype.Clone().Spawn();
-                break;
             default:
                 break;
         } 
@@ -83,18 +77,14 @@ public class PrototypeFactory : MonoBehaviour
 
     public void PlatformClone()
     {
-        platWidth = int.Parse(widthInput.text);
-        platHeight = int.Parse(heightInput.text);
+        platWidth = int.Parse(widthInput.GetComponent<TMP_InputField>().text);
+        platHeight = int.Parse(heightInput.GetComponent<TMP_InputField>().text);
         
         platformPrototype = new CustomizablePlatform(platformPrefab, platWidth, platHeight);
 
         if(platWidth != 0 && platHeight != 0)
         {
             editor.item = platformPrototype.Clone().Spawn();
-            if(!staticPlatform.isOn)
-            {
-                editor.item.AddComponent<MovingPlatform>();
-            }
             editor.instantiated = true;
         }
     }
